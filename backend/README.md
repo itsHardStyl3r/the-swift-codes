@@ -18,4 +18,5 @@ Make sure to provide database, as only the tables will be created. As of right n
 
 ## Known issues (or out of scope)
 - Current implementation does not support any authentication. ⚠️
-
+- Code performs automatic migrations on the database. This is not an issue per se, but should not be enabled in
+  production environment.

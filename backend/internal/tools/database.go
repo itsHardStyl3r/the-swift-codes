@@ -29,7 +29,7 @@ func ConnectToDb() error {
 
 func SetupDb(shouldAutoMigrate bool) error {
 	if shouldAutoMigrate {
-		err := DB.AutoMigrate(&models.Country{}, &models.Bank{})
+		err := DB.AutoMigrate(&models.Country{}, &models.Bank{}, &models.Bic{})
 		if err != nil {
 			log.Fatalf("Migration failed: %v", err)
 			return err
@@ -93,10 +93,54 @@ func SetupDb(shouldAutoMigrate bool) error {
 		}
 	}
 
+	if (DB.Migrator().HasTable(&models.Bic{})) {
+		DB.Model(&models.Bic{}).Count(&count)
+		if count != 0 {
+			log.Info("Found non-empty table 'bics'. No data added.")
+		} else {
+			log.Info("Populating table 'bics'...")
+			countryMap := loadCountryMap()
+			bankMap := loadBankMap()
+			var bics []models.Bic
+			for _, record := range records {
+				bankCode := record[1][:4]
+				countryIso := record[0]
+				bankId, bankExists := bankMap[bankCode]
+				countryId, countryExists := countryMap[countryIso]
+				if !bankExists {
+					log.Warnf("Bank with bankcode '%s' not found. Skipping %s.", bankCode, record[1])
+					continue
+				}
+				if !countryExists {
+					log.Warnf("Country with iso2 '%s' not found. Skipping %s.", countryIso, record[1])
+					continue
+				}
+				branch := "XXX"
+				if record[1][8:11] != "XXX" {
+					branch = record[1][8:11]
+				}
+				bics = append(bics, models.Bic{
+					Bic:          record[1],
+					BankId:       bankId,
+					CountryId:    countryId,
+					LocationCode: record[1][6:8],
+					Branch:       branch,
+					Address:      record[4],
+					Town:         record[5],
+					TimeZone:     record[7],
+					CodeType:     record[2],
+				})
+			}
+			err := addDataTransaction(bics)
+			if err != nil {
+				log.Warnf("Failed to add bics via transaction. %v", err)
+			}
+		}
+	}
 	return nil
 }
 
-func addDataTransaction[T models.Country | models.Bank](slice []T) error {
+func addDataTransaction[T models.Country | models.Bank | models.Bic](slice []T) error {
 	tx := DB.Begin()
 	err := tx.Error
 	if err != nil {
@@ -119,4 +163,28 @@ func LogDatabaseStats() {
 	log.Infof("- countries: %d entries", count)
 	DB.Model(&models.Bank{}).Count(&count)
 	log.Infof("- banks: %d entries", count)
+	DB.Model(&models.Bic{}).Count(&count)
+	log.Infof("- bics: %d entries", count)
+}
+
+func loadCountryMap() map[string]int {
+	var countries []models.Country
+	DB.Model(&models.Country{}).Select("id, iso2").Find(&countries)
+
+	countryMap := make(map[string]int)
+	for _, country := range countries {
+		countryMap[country.Iso2] = country.Id
+	}
+	return countryMap
+}
+
+func loadBankMap() map[string]int {
+	var banks []models.Bank
+	DB.Model(&models.Bank{}).Select("id, bank_code").Find(&banks)
+
+	bankMap := make(map[string]int)
+	for _, bank := range banks {
+		bankMap[bank.BankCode] = bank.Id
+	}
+	return bankMap
 }
