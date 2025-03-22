@@ -16,6 +16,50 @@ dbDatabase =
 ```
 Make sure to provide database, as only the tables will be created. As of right now, only MariaDB is supported.
 
+## Current endpoints
+### 1. GET: /v1/swift-codes/{swift-code}
+Retrieves details of a single SWIFT code whether for a headquarters or
+branches.
+- Response structure if {swift-code} points to headquarters:
+```json
+{
+  "address": string,
+  "bankName": string,
+  "countryISO2": string,
+  "countryName": string,
+  "isHeadquarter": bool,
+  "swiftCode": string
+  "branches": [
+    {
+      "address": string,
+      "bankName": string,
+      "countryISO2": string,
+      "isHeadquarter": bool,
+      "swiftCode": string
+    },
+    {
+      "address": string,
+      "bankName": string,
+      "countryISO2": string,
+      "isHeadquarter": bool,
+      "swiftCode": string
+    }, ...
+  ]
+}
+```
+
+- Response structure if {swift-code} points to a branch:
+```json
+{
+  "address": string,
+  "bankName": string,
+  "countryISO2": string,
+  "countryName": string,
+  "isHeadquarter": bool,
+  "swiftCode": string
+}
+```
+
 ## Known issues (or out of scope)
 - Current implementation does not support any authentication. ⚠️
 - Code performs automatic migrations on the database. This is not an issue per se, but should not be enabled in

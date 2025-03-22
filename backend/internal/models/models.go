@@ -26,3 +26,11 @@ type Bic struct {
 	LocationCode string `gorm:"size:2;not null"`
 	Branch       string `gorm:"size:3;default:'XXX'"`
 }
+
+func (bic Bic) IsHeadquarter() bool {
+	if bic.Bic[8:11] == "XXX" {
+		return true
+	} else {
+		return false
+	}
+}
