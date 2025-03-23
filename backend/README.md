@@ -23,10 +23,11 @@ Make sure to provide database, as only the tables will be created. As of right n
 
 ## Current endpoints
 
+All responses and requests should be in `content-type: application/json; charset=utf-8`.
+
 ### 1. GET: /v1/swift-codes/{swift-code}
 
-Retrieves details of a single SWIFT code whether for a headquarters or
-branches.
+Retrieves details of a single SWIFT code whether for a headquarters or branches.
 
 - Response structure if {swift-code} points to headquarters:
 
@@ -71,8 +72,65 @@ branches.
 }
 ```
 
+### 2. GET: /v1/swift-codes/country/{countryISO2code}
+
+Returns all SWIFT codes with details for a specific country (both headquarters and branches).
+
+- Response structure:
+
+```
+{
+  "countryISO2": string,
+  "countryName": string,
+  "swiftCodes": [
+    {
+      "address": string,
+      "bankName": string,
+      "countryISO2": string,
+      "isHeadquarter": bool,
+      "swiftCode": string
+    },
+    {
+      "address": string,
+      "bankName": string,
+      "countryISO2": string,
+      "isHeadquarter": bool,
+      "swiftCode": string
+    }, ...
+  ]
+}
+```
+
+### 3. POST: /v1/swift-codes
+
+Adds new SWIFT code entries to the database for a specific country.
+
+- Request structure:
+
+```
+{
+  "address": string,
+  "bankName": string,
+  "countryISO2": string,
+  "countryName": string,
+  "isHeadquarter": bool,
+  "swiftCode": string
+}
+```
+
+- Response structure:
+
+```
+{
+  "message": string
+}
+```
+
 ## Known issues (or out of scope)
 
 - Current implementation does not support any authentication. ⚠️
 - Code performs automatic migrations on the database. This is not an issue per se, but should not be enabled in
   production environment.
+- Ignoring the fact whether the codes should be marked BIC8 or BIC11.
+- Not all necessary fields (e.g. town, timezone) are filled due to lack of information or the way structures are
+  required to work.
