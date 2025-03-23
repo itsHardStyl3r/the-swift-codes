@@ -14,25 +14,21 @@ func deleteBySwiftCode(rg *gin.RouterGroup) {
 	request.DELETE("/:swift", func(c *gin.Context) {
 		swift := c.Param("swift")
 		if len(swift) != 11 {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Invalid swift code."})
+			abortWithJSON(c, http.StatusBadRequest, "Provided swift code is invalid.")
 			return
 		}
 
 		result := tools.DB.Where("bic = ?", swift).Delete(&models.Bic{})
 		if result.Error != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-				"message": "Error while deleting swift code.",
-			})
+			abortWithJSON(c, http.StatusInternalServerError, "There's been an error deleting this swift code.")
 			return
 		}
 		if result.RowsAffected == 0 {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-				"message": "Swift code has not been found.",
-			})
+			abortWithJSON(c, http.StatusNotFound, "Provided swift code has not been found.")
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{
-			"message": "Swift code deleted.",
+			"message": "Swift code successfully deleted.",
 		})
 	})
 }

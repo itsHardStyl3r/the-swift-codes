@@ -28,37 +28,37 @@ func postSwiftCode(rg *gin.RouterGroup) {
 	request.POST("", func(c *gin.Context) {
 		var body postSwiftRequest
 		if err := c.ShouldBindJSON(&body); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+			log.Debugf("Invalid JSON body: %s.", err)
+			abortWithJSON(c, http.StatusBadRequest,
+				"Provided JSON request body is invalid. Please check specification and try again.")
 			return
 		}
 
 		var bic models.Bic
 		if tools.DB.Where("bic = ?", body.SwiftCode).First(&bic).RowsAffected > 0 {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "This swift code is already in use."})
+			abortWithJSON(c, http.StatusBadRequest, "This swift code is already in use.")
 			return
 		}
 
+		// Note: This does not have to be so strict.
 		var country models.Country
 		if err := tools.DB.Where("iso2 = ? AND name = ?",
 			body.CountryISO2, body.CountryName).First(&country).Error; err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"message": "Country with such iso2 has not been found or there is a mismatch between ISO2 and country name.",
-			})
+			abortWithJSON(c, http.StatusNotFound,
+				"Country with such iso2 code has not been found or there is a mismatch between it and its country name.")
 			return
 		}
 
 		var bank models.Bank
 		if err := tools.DB.Where("bank_code = ?", body.getBankCode()).First(&bank).Error; err != nil {
-			log.Warn("This bank is not in the database yet. Adding...")
+			log.Info("This bank is not in the database yet. Adding...")
 			bank = models.Bank{
 				Name:     body.BankName,
 				BankCode: body.getBankCode(),
 			}
 			if err := tools.DB.Create(&bank).Error; err != nil {
-				log.Errorf("Failed to create bank: %v", err.Error())
-				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-					"message": "There was an error adding new bank: " + err.Error(),
-				})
+				log.Errorf("Failed to create new bank: %v.", err.Error())
+				abortWithJSON(c, http.StatusInternalServerError, "There was an error adding new bank.")
 				return
 			}
 		}
@@ -73,9 +73,8 @@ func postSwiftCode(rg *gin.RouterGroup) {
 		}
 
 		if err := tools.DB.Create(&newBic).Error; err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-				"message": "Failed to push new BIC to the database.",
-			})
+			log.Errorf("Failed to create new bic: %v.", err.Error())
+			abortWithJSON(c, http.StatusInternalServerError, "Failed to save new BIC data.")
 			return
 		}
 

@@ -16,3 +16,7 @@ func Run() error {
 	err := router.Run("127.0.0.1:8080")
 	return err
 }
+
+func abortWithJSON(c *gin.Context, status int, message string) {
+	c.AbortWithStatusJSON(status, gin.H{"message": message})
+}

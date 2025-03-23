@@ -20,17 +20,13 @@ func byCountryCode(rg *gin.RouterGroup) {
 	request.GET("/:iso2", func(c *gin.Context) {
 		swift := c.Param("iso2")
 		if len(swift) != 2 { // using len(), since iso2 consists only of a "2-byte rune"
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": "Invalid ISO2 code.",
-			})
+			abortWithJSON(c, http.StatusBadRequest, "Provided ISO2 code is invalid.")
 			return
 		}
 		var country models.Country
 		result := tools.DB.First(&country, "iso2 = ?", swift)
 		if result.Error != nil {
-			c.JSON(http.StatusNotFound, gin.H{
-				"message": "ISO2 code not found.",
-			})
+			abortWithJSON(c, http.StatusNotFound, "Country with such ISO2 code has not been found.")
 			return
 		}
 		var bics []models.Bic
