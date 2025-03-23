@@ -27,7 +27,7 @@ func bySwiftCode(rg *gin.RouterGroup) {
 		result := tools.DB.Joins("Bank").Joins("Country").Where("bic = ?", swift).First(&bic)
 		if result.Error != nil {
 			c.JSON(http.StatusNotFound, gin.H{
-				"error": "Swift code not found",
+				"message": "Swift code not found",
 			})
 			return
 		}
