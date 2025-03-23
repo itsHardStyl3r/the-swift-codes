@@ -42,7 +42,7 @@ func bySwiftCode(rg *gin.RouterGroup) {
 
 		if bic.IsHeadquarter() {
 			var bics []models.Bic
-			tools.DB.Preload("Bank").Preload("Country").Where("bank_id = ?", bic.BankId).Find(&bics)
+			tools.DB.Joins("Bank").Joins("Country").Where("bank_id = ?", bic.BankId).Find(&bics)
 			branches := make([]swiftResponse, 0, len(bics))
 			for _, branch := range bics {
 				branches = append(branches, swiftResponse{
