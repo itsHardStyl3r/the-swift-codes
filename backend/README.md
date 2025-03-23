@@ -126,6 +126,18 @@ Adds new SWIFT code entries to the database for a specific country.
 }
 ```
 
+### 4. DELETE: /v1/swift-codes/{swift-code}
+
+Deletes swift-code data if swiftCode matches the one in the database.
+
+- Response structure:
+
+```
+{
+  "message": string
+}
+```
+
 ## Known issues (or out of scope)
 
 - Current implementation does not support any authentication. ⚠️

@@ -11,6 +11,7 @@ func Run() error {
 	bySwiftCode(v1)
 	byCountryCode(v1)
 	postSwiftCode(v1)
+	deleteBySwiftCode(v1)
 
 	err := router.Run("127.0.0.1:8080")
 	return err
