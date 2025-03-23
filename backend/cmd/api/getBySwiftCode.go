@@ -11,7 +11,7 @@ type swiftResponse struct {
 	Address       string          `json:"address"`
 	BankName      string          `json:"bankName"`
 	CountryISO2   string          `json:"countryISO2"`
-	CountryName   string          `json:"countryName"`
+	CountryName   string          `json:"countryName,omitempty"`
 	IsHeadquarter bool            `json:"isHeadquarter"`
 	SwiftCode     string          `json:"swiftCode"`
 	Branches      []swiftResponse `json:"branches,omitempty"`
