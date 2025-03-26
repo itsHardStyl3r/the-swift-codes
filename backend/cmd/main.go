@@ -24,7 +24,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect to database. %v", err)
 	}
-	err = tools.SetupDb(true)
+	err = tools.SetupDb(true, true)
 	if err != nil {
 		log.Fatalf("Failed to setup database. %v", err)
 	} else {

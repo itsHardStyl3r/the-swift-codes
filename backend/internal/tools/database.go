@@ -27,13 +27,17 @@ func ConnectToDb() error {
 	return nil
 }
 
-func SetupDb(shouldAutoMigrate bool) error {
+func SetupDb(shouldAutoMigrate bool, shouldPopulate bool) error {
 	if shouldAutoMigrate {
 		err := DB.AutoMigrate(&models.Country{}, &models.Bank{}, &models.Bic{})
 		if err != nil {
 			log.Fatalf("Migration failed: %v", err)
 			return err
 		}
+	}
+
+	if !shouldPopulate {
+		return nil
 	}
 
 	var dataPath = os.Getenv("csvDataPath")
