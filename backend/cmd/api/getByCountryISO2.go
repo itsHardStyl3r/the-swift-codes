@@ -13,9 +13,9 @@ type countryResponse struct {
 	SwiftCodes  []swiftResponse `json:"swiftCodes,omitempty"`
 }
 
-// Endpoint 2: Return all SWIFT codes with details for a specific country (both headquarters and branches).
+// ByCountryCode Endpoint 2: Return all SWIFT codes with details for a specific country (both headquarters and branches).
 // GET: /v1/swift-codes/country/{countryISO2code}:
-func byCountryCode(rg *gin.RouterGroup) {
+func ByCountryCode(rg *gin.RouterGroup) {
 	request := rg.Group("/swift-codes/country")
 	request.GET("/:iso2", func(c *gin.Context) {
 		swift := c.Param("iso2")

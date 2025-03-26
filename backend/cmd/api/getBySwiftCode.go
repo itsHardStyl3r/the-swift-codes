@@ -17,9 +17,9 @@ type swiftResponse struct {
 	Branches      []swiftResponse `json:"branches,omitempty"`
 }
 
-// Endpoint 1: Retrieve details of a single SWIFT code whether for a headquarters or branches.
+// BySwiftCode Endpoint 1: Retrieve details of a single SWIFT code whether for a headquarters or branches.
 // GET: /v1/swift-codes/{swift-code}:
-func bySwiftCode(rg *gin.RouterGroup) {
+func BySwiftCode(rg *gin.RouterGroup) {
 	request := rg.Group("/swift-codes")
 	request.GET("/:swift", func(c *gin.Context) {
 		swift := c.Param("swift")

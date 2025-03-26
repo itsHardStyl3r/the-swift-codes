@@ -21,9 +21,9 @@ func (PostSwiftRequest postSwiftRequest) getBankCode() string {
 	return PostSwiftRequest.SwiftCode[0:4]
 }
 
-// Endpoint 3: Adds new SWIFT code entries to the database for a specific country.
+// PostSwiftCode Endpoint 3: Adds new SWIFT code entries to the database for a specific country.
 // POST: /v1/swift-codes
-func postSwiftCode(rg *gin.RouterGroup) {
+func PostSwiftCode(rg *gin.RouterGroup) {
 	request := rg.Group("/swift-codes")
 	request.POST("", func(c *gin.Context) {
 		var body postSwiftRequest

@@ -7,9 +7,9 @@ import (
 	"net/http"
 )
 
-// Endpoint 4: Deletes swift-code data if swiftCode matches the one in the database.
+// DeleteBySwiftCode Endpoint 4: Deletes swift-code data if swiftCode matches the one in the database.
 // DELETE: /v1/swift-codes/{swift-code}:
-func deleteBySwiftCode(rg *gin.RouterGroup) {
+func DeleteBySwiftCode(rg *gin.RouterGroup) {
 	request := rg.Group("/swift-codes")
 	request.DELETE("/:swift", func(c *gin.Context) {
 		swift := c.Param("swift")
