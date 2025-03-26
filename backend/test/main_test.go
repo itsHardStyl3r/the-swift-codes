@@ -4,6 +4,7 @@ import (
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
 	"github.com/glebarez/sqlite"
+	"github.com/itsHardStyl3r/the-swift-codes/cmd/api"
 	"github.com/itsHardStyl3r/the-swift-codes/internal/models"
 	"github.com/itsHardStyl3r/the-swift-codes/internal/tools"
 	"github.com/stretchr/testify/suite"
@@ -31,6 +32,8 @@ func (s *APITestSuite) SetupSuite() {
 	gin.SetMode(gin.TestMode)
 	s.gin = gin.Default()
 	s.populateWithMock()
+	v1 := s.gin.Group("/v1")
+	api.DeleteBySwiftCode(v1)
 	tools.LogDatabaseStats()
 }
 
