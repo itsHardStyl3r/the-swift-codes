@@ -41,6 +41,7 @@ func (s *APITestSuite) SetupSuite() {
 
 func (s *APITestSuite) TearDownSuite() {
 	if s.DB != nil {
+		tools.LogDatabaseStats()
 		db, err := s.DB.DB()
 		if err != nil {
 			log.Errorf("DB() failed: %v.", err)
