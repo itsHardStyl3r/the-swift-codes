@@ -21,6 +21,7 @@ type APITestSuite struct {
 
 func (s *APITestSuite) SetupSuite() {
 	s.path = "/v1/swift-codes"
+	log.SetLevel(log.DebugLevel)
 	var err error
 	if tools.DB, err = gorm.Open(sqlite.Open(":memory:")); err != nil {
 		log.Fatalf("Failed to connect to database: %v.", err)
@@ -36,6 +37,7 @@ func (s *APITestSuite) SetupSuite() {
 	api.DeleteBySwiftCode(v1)
 	api.ByCountryCode(v1)
 	api.BySwiftCode(v1)
+	api.PostSwiftCode(v1)
 	tools.LogDatabaseStats()
 }
 
