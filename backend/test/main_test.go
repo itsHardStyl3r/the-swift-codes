@@ -35,6 +35,7 @@ func (s *APITestSuite) SetupSuite() {
 	v1 := s.gin.Group("/v1")
 	api.DeleteBySwiftCode(v1)
 	api.ByCountryCode(v1)
+	api.BySwiftCode(v1)
 	tools.LogDatabaseStats()
 }
 
@@ -84,6 +85,16 @@ func (s *APITestSuite) populateWithMock() {
 		Town:         "Riga",
 		LocationCode: "DE",
 		Branch:       "XXX",
+	})
+
+	s.DB.Create(&models.Bic{
+		CountryId:    2,
+		Bic:          "LITWLTDEADD",
+		BankId:       2,
+		Address:      "Some address",
+		Town:         "Riga",
+		LocationCode: "DE",
+		Branch:       "ADD",
 	})
 
 	s.DB.Create(&models.Bic{
