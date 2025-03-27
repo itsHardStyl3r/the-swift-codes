@@ -8,17 +8,23 @@ import (
 	"net/http"
 )
 
-type postSwiftRequest struct {
+type PostSwiftRequest struct {
 	Address       string `json:"address" binding:"required"`
 	BankName      string `json:"bankName" binding:"required"`
 	CountryISO2   string `json:"countryISO2" binding:"required"`
 	CountryName   string `json:"countryName" binding:"required"`
-	IsHeadquarter bool   `json:"isHeadquarter" binding:"required"`
+	IsHeadquarter bool   `json:"isHeadquarter"`
 	SwiftCode     string `json:"swiftCode" binding:"required"`
 }
 
-func (PostSwiftRequest postSwiftRequest) getBankCode() string {
+func (PostSwiftRequest PostSwiftRequest) getBankCode() string {
 	return PostSwiftRequest.SwiftCode[0:4]
+}
+
+// This fucking checks rune length since swift codes don't use special chars.
+// Note that this will work only if you use XXX for headquarters, so use BIC11s.
+func (PostSwiftRequest PostSwiftRequest) isValidSwiftCode() bool {
+	return len(PostSwiftRequest.SwiftCode) == 11
 }
 
 // PostSwiftCode Endpoint 3: Adds new SWIFT code entries to the database for a specific country.
@@ -26,11 +32,16 @@ func (PostSwiftRequest postSwiftRequest) getBankCode() string {
 func PostSwiftCode(rg *gin.RouterGroup) {
 	request := rg.Group("/swift-codes")
 	request.POST("", func(c *gin.Context) {
-		var body postSwiftRequest
+		var body PostSwiftRequest
 		if err := c.ShouldBindJSON(&body); err != nil {
 			log.Debugf("Invalid JSON body: %s.", err)
 			abortWithJSON(c, http.StatusBadRequest,
 				"Provided JSON request body is invalid. Please check specification and try again.")
+			return
+		}
+
+		if !body.isValidSwiftCode() {
+			abortWithJSON(c, http.StatusBadRequest, "Provided swift code is invalid.")
 			return
 		}
 
