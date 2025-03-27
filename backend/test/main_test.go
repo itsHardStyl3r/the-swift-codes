@@ -65,9 +65,9 @@ func (s *APITestSuite) populateWithMock() {
 	s.DB.Create(&models.Bank{Name: "Bank of Malta", BankCode: "MALT"})
 
 	s.DB.Create(&models.Bic{
-		CountryId:    0,
+		CountryId:    1,
 		Bic:          "POLSPLAWXXX",
-		BankId:       0,
+		BankId:       1,
 		Address:      "Some address",
 		Town:         "WARSAW",
 		LocationCode: "AW",
