@@ -34,6 +34,7 @@ func (s *APITestSuite) SetupSuite() {
 	s.populateWithMock()
 	v1 := s.gin.Group("/v1")
 	api.DeleteBySwiftCode(v1)
+	api.ByCountryCode(v1)
 	tools.LogDatabaseStats()
 }
 
@@ -59,6 +60,7 @@ func (s *APITestSuite) populateWithMock() {
 	s.DB.Create(&models.Country{Name: "POLAND", Iso2: "PL"})
 	s.DB.Create(&models.Country{Name: "LATVIA", Iso2: "LT"})
 	s.DB.Create(&models.Country{Name: "MALTA", Iso2: "MT"})
+	s.DB.Create(&models.Country{Name: "BULGARIA", Iso2: "BG"})
 
 	s.DB.Create(&models.Bank{Name: "Bank of Poland", BankCode: "POLS"})
 	s.DB.Create(&models.Bank{Name: "Bank of Latvia", BankCode: "LITW"})
