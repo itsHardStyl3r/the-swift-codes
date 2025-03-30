@@ -64,6 +64,40 @@ func (s *APITestSuite) TestPostSwiftCodeInvalidCountry() {
 	assert.Equal(s.T(), http.StatusNotFound, w.Code)
 }
 
+// This contains correct country, but it doesn't match in the swift code.
+func (s *APITestSuite) TestPostSwiftCodeCountryMismatch() {
+	re := api.PostSwiftRequest{
+		Address:       "Some address",
+		BankName:      "Bank of Poland",
+		CountryISO2:   "PL",
+		CountryName:   "POLAND",
+		IsHeadquarter: true,
+		SwiftCode:     "POLSLPDDXXX",
+	}
+	jsonre, _ := json.Marshal(&re)
+	req, _ := http.NewRequest("POST", s.path, bytes.NewBuffer(jsonre))
+	w := httptest.NewRecorder()
+	s.gin.ServeHTTP(w, req)
+	assert.Equal(s.T(), http.StatusBadRequest, w.Code)
+}
+
+// This is supposed to add a branch, but swift code ends with XXX, pointing to headquarter.
+func (s *APITestSuite) TestPostSwiftCodeHeadquarterMismatch() {
+	re := api.PostSwiftRequest{
+		Address:       "Some address",
+		BankName:      "Bank of Poland",
+		CountryISO2:   "PL",
+		CountryName:   "POLAND",
+		IsHeadquarter: false,
+		SwiftCode:     "POLSLPDDXXX",
+	}
+	jsonre, _ := json.Marshal(&re)
+	req, _ := http.NewRequest("POST", s.path, bytes.NewBuffer(jsonre))
+	w := httptest.NewRecorder()
+	s.gin.ServeHTTP(w, req)
+	assert.Equal(s.T(), http.StatusBadRequest, w.Code)
+}
+
 // This contains correct information, so POST should succeed.
 func (s *APITestSuite) TestPostSwiftCode() {
 	re := api.PostSwiftRequest{
@@ -72,7 +106,7 @@ func (s *APITestSuite) TestPostSwiftCode() {
 		CountryISO2:   "PL",
 		CountryName:   "POLAND",
 		IsHeadquarter: true,
-		SwiftCode:     "POLSAWAWXXX",
+		SwiftCode:     "POLSPLDDXXX",
 	}
 	jsonre, _ := json.Marshal(&re)
 	req, _ := http.NewRequest("POST", s.path, bytes.NewBuffer(jsonre))

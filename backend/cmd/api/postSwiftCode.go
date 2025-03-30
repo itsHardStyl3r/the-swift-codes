@@ -6,6 +6,7 @@ import (
 	"github.com/itsHardStyl3r/the-swift-codes/internal/models"
 	"github.com/itsHardStyl3r/the-swift-codes/internal/tools"
 	"net/http"
+	"strings"
 )
 
 type PostSwiftRequest struct {
@@ -72,6 +73,15 @@ func PostSwiftCode(rg *gin.RouterGroup) {
 				abortWithJSON(c, http.StatusInternalServerError, "There was an error adding new bank.")
 				return
 			}
+		}
+
+		if !strings.HasPrefix(body.SwiftCode, bank.BankCode+country.Iso2) {
+			abortWithJSON(c, http.StatusBadRequest, "Swift code doesn't match the provided country information.")
+			return
+		}
+		if body.IsHeadquarter && !strings.HasSuffix(body.SwiftCode, "XXX") {
+			abortWithJSON(c, http.StatusBadRequest, "Swift code is supposed to be headquarters, but is not.")
+			return
 		}
 
 		newBic := models.Bic{
