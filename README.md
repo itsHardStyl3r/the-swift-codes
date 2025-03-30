@@ -176,4 +176,4 @@ pnpm run dev
 
 ## Running tests (backend only)
 
-See [backend README](backend/README.md).
+See [backend README](backend/README.md#running-tests).
