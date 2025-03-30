@@ -7,6 +7,7 @@ import (
 	"github.com/itsHardStyl3r/the-swift-codes/cmd/api"
 	"github.com/itsHardStyl3r/the-swift-codes/internal/tools"
 	"github.com/joho/godotenv"
+	"os"
 )
 
 func main() {
@@ -32,7 +33,7 @@ func main() {
 	}
 	tools.LogDatabaseStats()
 
-	log.Info(fmt.Sprintf(color.HiCyanString("Starting HTTP server http://127.0.0.1:8080...")))
+	log.Info(color.HiCyanString(fmt.Sprintf("Starting HTTP server http://%s...", os.Getenv("httpListenOn"))))
 	err = api.Run()
 	if err != nil {
 		log.Fatalf("Failed to start HTTP server. %v", err)

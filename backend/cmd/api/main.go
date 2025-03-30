@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"os"
 )
 
 var router = gin.Default()
@@ -13,7 +14,7 @@ func Run() error {
 	PostSwiftCode(v1)
 	DeleteBySwiftCode(v1)
 
-	err := router.Run("127.0.0.1:8080")
+	err := router.Run(os.Getenv("httpListenOn"))
 	return err
 }
 

@@ -17,6 +17,7 @@ dbUser =
 dbPassword =
 dbAddr = address:port
 dbDatabase =
+httpListenOn = 0.0.0.0:8080
 ```
 
 Make sure to provide database, as only the tables will be created. As of right now, only MariaDB is supported.
@@ -146,3 +147,4 @@ Deletes swift-code data if swiftCode matches the one in the database.
 - Ignoring the fact whether the codes should be marked BIC8 or BIC11.
 - Not all necessary fields (e.g. town, timezone) are filled due to lack of information or the way structures are
   required to work.
+- Graceful shutdown.

@@ -4,7 +4,51 @@ This repository contains both backend and frontend, although frontend was out of
 
 <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/go/go-original.svg" alt="go" width="32" height="32"/> <img src="https://www.vectorlogo.zone/logos/mariadb/mariadb-icon.svg" alt="mariadb" width="32" height="32"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-plain.svg" alt="typescript" width="32" height="32"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/vitejs/vitejs-original.svg" alt="vitejs" width="32" height="32"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/pnpm/pnpm-original.svg" alt="pnpm" width="32" height="32"/>
 
-## Requirements
+## Running in docker (recommended)
+
+### 0. Install docker or podman.
+
+### 1. Clone the repository
+
+Clone the repository using
+
+```
+git clone https://github.com/itsHardStyl3r/the-swift-codes
+```
+
+### 2. Setting up the environment (Important)
+
+Edit .env file in root with following content (you can keep the values as shown):
+
+```
+MYSQL_ROOT_PASSWORD=password
+MYSQL_DATABASE=swifties
+MYSQL_USER=user
+MYSQL_PASSWORD=password
+```
+
+and then another .env in ./backend:
+
+```
+csvDataPath=the-swift-codes.csv
+dbUser=user
+dbPassword=password
+dbAddr=mariadb_db:3306
+dbDatabase=swifties
+httpListenOn=0.0.0.0:8080
+```
+
+### 3. Composing the container
+
+In the root directory of the project run this command
+
+```
+docker-compose up
+```
+
+and you should be good to go. The database will start and set up first, then the backend.
+
+## Requirements / running manually
 
 Backend is written in Go and uses mariadb. Frontend uses typescript and pnpm, so naturally you'd need node.js.
 
